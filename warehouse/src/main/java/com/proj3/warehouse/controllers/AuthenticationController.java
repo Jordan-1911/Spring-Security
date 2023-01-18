@@ -27,11 +27,14 @@ public class AuthenticationController {
 
     public ResponseEntity<String> authenticate(@RequestBody AuthenticationRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()));
+//        final UserDetails user = userDao.findUserByEmail(request.getEmail());
+//        if (user != null) {
+//            return ResponseEntity.ok(jwtUtils.generateToken(user));
+//        }
         final UserDetails user = userDao.findUserByEmail(request.getEmail());
-        if (user != null) {
-            return ResponseEntity.ok(jwtUtils.generateToken(user));
-        }
         return ResponseEntity.status(400).body("An error has occurred.");
     }
 

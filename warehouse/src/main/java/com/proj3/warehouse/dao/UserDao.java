@@ -17,12 +17,12 @@ public class UserDao {
                     "user123@test.com",
                     "password",
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"))
-            ),
-            new User(
-                    "user123@test.com",
-                    "password",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"))
             )
+//            new User(
+//                    "user123@test.com",
+//                    "password",
+//                    Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"))
+//            )
     );
 
     public UserDetails findUserByEmail(String email) {

@@ -26,23 +26,40 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private UserDao userDao;
 
-    @Bean  //new security filter bean overriden from built in method (picks this bean instead of built in)
+    @Bean  //new security filter bean overridden from built in method (picks this bean instead of built-in)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()  // do NOT use in production
-                .authorizeRequests()
-                .antMatchers("/**/auth/**")  // everytime we encounter this pattern, make available without auth
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                ;
+                .csrf()
+                .disable()  // do NOT use in production
+                .authorizeRequests((request) -> {
+                    try {
+                    request.antMatchers("/**/auth/authenticate")
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated()
+                            .and()
+                            .sessionManagement()
+                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                })
+                    .authenticationProvider(authenticationProvider())
+                    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+
+//                .antMatchers("/**/auth/authenticate")  // everytime we encounter this pattern, make available without auth
+//                .permitAll()
+//                .anyRequest()
+//                .authenticated()
+//                .and()
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .authenticationProvider(authenticationProvider())
+//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+//                ;
+//        return http.build();
     }
 
     @Bean
@@ -59,8 +76,8 @@ public class SecurityConfig {
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
+//        return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
